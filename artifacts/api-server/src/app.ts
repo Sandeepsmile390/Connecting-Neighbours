@@ -12,16 +12,21 @@ import { authMiddleware } from "./middlewares/authMiddleware";
 
 const app: Express = express();
 
+/* IMPORTANT FOR RENDER HTTPS PROXY */
+app.set("trust proxy", 1);
+
 app.use(
   pinoHttp({
     logger,
   })
 );
 
-app.use(cors({
-  credentials: true,
-  origin: process.env.FRONTEND_URL,
-}));
+app.use(
+  cors({
+    credentials: true,
+    origin: process.env.FRONTEND_URL,
+  })
+);
 
 app.use(cookieParser());
 
@@ -33,9 +38,12 @@ app.use(
     secret: process.env.SESSION_SECRET!,
     resave: false,
     saveUninitialized: false,
+    proxy: true,
     cookie: {
       secure: true,
       sameSite: "none",
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })
 );
@@ -70,7 +78,7 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    failureRedirect: process.env.FRONTEND_URL,
+    failureRedirect: process.env.FRONTEND_URL!,
   }),
   (_req, res) => {
     res.redirect(process.env.FRONTEND_URL!);
