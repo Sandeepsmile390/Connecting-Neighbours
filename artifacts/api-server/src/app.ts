@@ -12,7 +12,7 @@ import { authMiddleware } from "./middlewares/authMiddleware";
 
 const app: Express = express();
 
-/* IMPORTANT FOR RENDER HTTPS PROXY */
+/* IMPORTANT FOR RENDER */
 app.set("trust proxy", 1);
 
 app.use(
@@ -29,10 +29,10 @@ app.use(
 );
 
 app.use(cookieParser());
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+/* SESSION */
 app.use(
   session({
     secret: process.env.SESSION_SECRET!,
@@ -43,11 +43,12 @@ app.use(
       secure: true,
       sameSite: "none",
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 7,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     },
   })
 );
 
+/* PASSPORT */
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -68,6 +69,7 @@ passport.use(
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user: any, done) => done(null, user));
 
+/* AUTH ROUTES */
 app.get(
   "/auth/google",
   passport.authenticate("google", {
@@ -95,8 +97,8 @@ app.get("/auth/logout", (req: any, res) => {
   });
 });
 
+/* EXISTING API */
 app.use(authMiddleware);
-
 app.use("/api", router);
 
 export default app;
