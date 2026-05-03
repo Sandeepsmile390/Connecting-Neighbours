@@ -83,6 +83,13 @@ function getSafeReturnTo(value: unknown): string {
   return value;
 }
 
+function isValidMobileRedirect(url: string): boolean {
+  return (
+    url.startsWith("neighbors-mobile://") ||
+    url.startsWith("exp+neighbors-mobile://")
+  );
+}
+
 async function upsertUser(claims: Record<string, unknown>) {
   const userData = {
     id: claims.sub as string,
@@ -141,6 +148,12 @@ router.get("/login", async (req: Request, res: Response) => {
   setOidcCookie(res, "nonce", nonce);
   setOidcCookie(res, "state", state);
   setOidcCookie(res, "return_to", returnTo);
+
+  // Support mobile deep-link redirect after login
+  const mobileRedirect = typeof req.query.mobile_redirect === "string" ? req.query.mobile_redirect : null;
+  if (mobileRedirect && isValidMobileRedirect(mobileRedirect)) {
+    setOidcCookie(res, "mobile_redirect", mobileRedirect);
+  }
 
   res.redirect(redirectTo.href);
 });
@@ -207,6 +220,17 @@ router.get("/callback", async (req: Request, res: Response) => {
   };
 
   const sid = await createSession(sessionData);
+
+  // Mobile deep-link redirect: send token via custom scheme instead of setting cookie
+  const mobileRedirect = req.cookies?.mobile_redirect;
+  if (mobileRedirect && isValidMobileRedirect(mobileRedirect)) {
+    res.clearCookie("mobile_redirect", { path: "/" });
+    const redirectUrl = new URL(mobileRedirect);
+    redirectUrl.searchParams.set("token", sid);
+    res.redirect(redirectUrl.toString());
+    return;
+  }
+
   setSessionCookie(res, sid);
   res.redirect(returnTo);
 });

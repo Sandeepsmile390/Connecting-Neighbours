@@ -1,5 +1,10 @@
 uploads = []
-generated = []
+
+[[generated]]
+id = "KuNGTge70cBc7Yw_ZMDNd"
+uri = "file://artifacts/neighbors-mobile/assets/images/icon.png"
+type = "image"
+title = "generated_image"
 
 [[outputs]]
 id = "TOypw_9xDrXHdxertJrzR"

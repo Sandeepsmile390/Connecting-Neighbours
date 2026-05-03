@@ -22,11 +22,21 @@ A hyperlocal community app for residential colonies where neighbors connect, sha
 
 - `artifacts/connecting-neighbors/` — React + Vite frontend (served at `/`)
 - `artifacts/api-server/` — Express API server (served at `/api`)
+- `artifacts/neighbors-mobile/` — Expo (React Native) mobile app (preview at `/mobile/`)
 - `lib/api-spec/openapi.yaml` — OpenAPI spec (single source of truth)
-- `lib/api-client-react/` — Generated React Query hooks
+- `lib/api-client-react/` — Generated React Query hooks (shared by web + mobile)
 - `lib/api-zod/` — Generated Zod validation schemas
 - `lib/db/` — Drizzle ORM schema and DB connection
 - `lib/replit-auth-web/` — Browser auth hook (`useAuth`)
+
+## Mobile App (Expo)
+
+- **Navigation**: 5 bottom tabs — Home, Feed, Market, Events, More
+- **More tab**: links to Members, Safety Alerts, Resources, Profile + Sign Out
+- **Auth**: `expo-web-browser.openAuthSessionAsync` opens Replit OIDC login; server redirects back to `neighbors-mobile://auth-callback?token=<sid>` via `?mobile_redirect=` param; token stored in AsyncStorage and sent as `Authorization: Bearer` header
+- **API**: All screens use generated `@workspace/api-client-react` hooks with `setBaseUrl` + `setAuthTokenGetter`
+- **Design**: Matches web app design tokens (teal primary `#289B87`, warm background `#FAF9F5`); NativeTabs with liquid glass on iOS 26+, BlurView Tabs fallback on older iOS/Android
+- **Server change**: `GET /api/login?mobile_redirect=<scheme-url>` sets a cookie that causes `GET /api/callback` to redirect to the app scheme with the session token after successful auth
 
 ## Key Features
 
