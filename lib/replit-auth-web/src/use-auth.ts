@@ -3,6 +3,10 @@ import type { AuthUser } from "@workspace/api-client-react";
 
 export type { AuthUser };
 
+const API =
+  import.meta.env.VITE_API_URL ||
+  "https://connecting-neighbours-api.onrender.com";
+
 interface AuthState {
   user: AuthUser | null;
   isLoading: boolean;
@@ -18,10 +22,12 @@ export function useAuth(): AuthState {
   useEffect(() => {
     let cancelled = false;
 
-    fetch("/api/auth/user", { credentials: "include" })
+    fetch(`${API}/api/auth/user`, {
+      credentials: "include",
+    })
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json() as Promise<{ user: AuthUser | null }>;
+        return res.json();
       })
       .then((data) => {
         if (!cancelled) {
@@ -42,12 +48,11 @@ export function useAuth(): AuthState {
   }, []);
 
   const login = useCallback(() => {
-    const base = import.meta.env.BASE_URL.replace(/\/+$/, "") || "/";
-    window.location.href = `https://connecting-neighbours-api.onrender.com/api/login?returnTo=/`;
+    window.location.href = `${API}/api/login?returnTo=/`;
   }, []);
 
   const logout = useCallback(() => {
-    window.location.href = "/api/logout";
+    window.location.href = `${API}/api/logout`;
   }, []);
 
   return {
