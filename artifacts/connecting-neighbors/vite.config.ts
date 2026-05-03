@@ -8,18 +8,27 @@ const basePath = process.env.BASE_PATH || "/";
 
 export default defineConfig({
   base: basePath,
+
   plugins: [react(), tailwindcss()],
+
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "src"),
       "@assets": path.resolve(import.meta.dirname, "..", "..", "attached_assets"),
     },
+    dedupe: ["react", "react-dom"],
   },
+
+  optimizeDeps: {
+    include: ["react", "react-dom"],
+  },
+
   build: {
     outDir: "dist",
     emptyOutDir: true,
     sourcemap: false,
   },
+
   server: {
     port,
     host: "0.0.0.0",
