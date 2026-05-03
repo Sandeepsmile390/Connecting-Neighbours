@@ -43,7 +43,7 @@ export function useAuth(): AuthState {
 
   const login = useCallback(() => {
     const base = import.meta.env.BASE_URL.replace(/\/+$/, "") || "/";
-    window.location.href = `/api/login?returnTo=${encodeURIComponent(base)}`;
+    window.location.href = `https://connecting-neighbours-api.onrender.com/api/login?returnTo=/`;
   }, []);
 
   const logout = useCallback(() => {
