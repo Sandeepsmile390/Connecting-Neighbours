@@ -3,9 +3,7 @@ import type { AuthUser } from "@workspace/api-client-react";
 
 export type { AuthUser };
 
-const API =
-  import.meta.env.VITE_API_URL ||
-  "https://connecting-neighbours-api.onrender.com";
+const API ="https://connecting-neighbours-api.onrender.com";
 
 interface AuthState {
   user: AuthUser | null;
