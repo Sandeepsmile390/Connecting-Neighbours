@@ -3,7 +3,7 @@ import type { AuthUser } from "@workspace/api-client-react";
 
 export type { AuthUser };
 
-const API ="https://connecting-neighbours-api.onrender.com";
+const API = "https://connecting-neighbours-api.onrender.com";
 
 interface AuthState {
   user: AuthUser | null;
@@ -20,7 +20,7 @@ export function useAuth(): AuthState {
   useEffect(() => {
     let cancelled = false;
 
-    fetch(`${API}/api/auth/user`, {
+    fetch(`${API}/auth/me`, {
       credentials: "include",
     })
       .then((res) => {
@@ -46,11 +46,11 @@ export function useAuth(): AuthState {
   }, []);
 
   const login = useCallback(() => {
-    window.location.href = `${API}/api/login?returnTo=/`;
+    window.location.href = `${API}/auth/google`;
   }, []);
 
   const logout = useCallback(() => {
-    window.location.href = `${API}/api/logout`;
+    window.location.href = `${API}/auth/logout`;
   }, []);
 
   return {
